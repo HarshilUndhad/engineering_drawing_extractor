@@ -3,7 +3,7 @@ File Handler Module
 Handles file upload routing, format detection, and PDF-to-image conversion.
 Supports JPG, PNG, and PDF engineering drawings.
 
-Uses PyMuPDF (fitz) for PDF rendering — no poppler dependency needed.
+Uses pypdfium2 (Chrome's PDFium engine) for highly accurate CAD/vector PDF rendering.
 """
 
 import io
@@ -17,12 +17,6 @@ from config import PDF_DPI
 def detect_file_type(file_name: str) -> str:
     """
     Detect the file type from the filename extension.
-    
-    Args:
-        file_name: Name of the uploaded file.
-        
-    Returns:
-        File type string: 'pdf', 'jpg', 'png', or 'unknown'.
     """
     extension = file_name.lower().rsplit(".", 1)[-1] if "." in file_name else ""
     if extension == "pdf":
@@ -41,19 +35,6 @@ def process_upload(file_bytes: bytes, file_name: str) -> Tuple[List[Image.Image]
     
     For PDFs: renders each page to a PIL Image using PyMuPDF.
     For images: loads directly as a single PIL Image.
-    
-    Args:
-        file_bytes: Raw bytes of the uploaded file.
-        file_name:  Original filename (used for type detection).
-        
-    Returns:
-        Tuple of:
-            - List of PIL Images (one per page for PDFs, one for images)
-            - File type string ('pdf', 'jpg', 'png')
-            - Original file bytes (passed through for text extraction)
-            
-    Raises:
-        ValueError: If the file type is not supported.
     """
     file_type = detect_file_type(file_name)
     
@@ -79,12 +60,6 @@ def convert_pdf_to_images(pdf_bytes: bytes) -> List[Image.Image]:
     because CAD-generated engineering drawings heavily use Optional Content
     Groups (layers) and complex blend modes that PyMuPDF struggles to render
     correctly, causing disappearing hatching and colored bands.
-
-    Args:
-        pdf_bytes: Raw bytes of the PDF file.
-
-    Returns:
-        List of PIL Images, one per page.
     """
     doc = pdfium.PdfDocument(pdf_bytes)
     images = []
@@ -114,12 +89,6 @@ def convert_pdf_to_images(pdf_bytes: bytes) -> List[Image.Image]:
 def load_image(image_bytes: bytes) -> Image.Image:
     """
     Load image bytes into a PIL Image.
-    
-    Args:
-        image_bytes: Raw bytes of the image file.
-        
-    Returns:
-        PIL Image object.
     """
     return Image.open(io.BytesIO(image_bytes)).convert("RGB")
 
@@ -132,13 +101,6 @@ def get_image_for_display(image: Image.Image, max_width: int = 5000) -> Image.Im
     drawings are usually not downsampled. Streamlit will gracefully fit the 
     image to screen, but zooming/opening in a new tab will retain full crisp
     text and vector sharpness.
-
-    Args:
-        image:     PIL Image to resize.
-        max_width: Maximum display width in pixels (default 5000).
-
-    Returns:
-        Resized PIL Image (or original if already small enough).
     """
     if image.width > max_width:
         ratio = max_width / image.width

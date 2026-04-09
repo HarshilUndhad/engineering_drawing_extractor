@@ -23,13 +23,6 @@ def image_to_base64(image: Image.Image, max_size: int = 1920) -> str:
     """
     Convert a PIL Image to a base64-encoded string.
     Resizes if needed to stay within model input limits.
-    
-    Args:
-        image:    PIL Image to convert.
-        max_size: Maximum dimension (width or height) in pixels.
-        
-    Returns:
-        Base64-encoded JPEG string.
     """
     # Resize large images to avoid exceeding model context
     if image.width > max_size or image.height > max_size:
@@ -45,14 +38,6 @@ def image_to_base64(image: Image.Image, max_size: int = 1920) -> str:
 def extract_with_vision(image: Image.Image, model_tag: str) -> Dict[str, List[str]]:
     """
     Send drawing image to Ollama vision model and extract structured data.
-    
-    Args:
-        image:     PIL Image of the engineering drawing (one page).
-        model_tag: Ollama model tag (e.g. 'llava:7b', 'qwen2-vl:2b').
-        
-    Returns:
-        Dict with category keys and lists of extracted items.
-        Returns empty categories on failure.
     """
     img_b64 = image_to_base64(image)
     
@@ -116,12 +101,6 @@ def parse_vision_response(raw_text: str) -> Dict[str, List[str]]:
     """
     Parse the LLM's raw text response into a structured dict.
     Handles cases where the model wraps JSON in markdown code blocks.
-    
-    Args:
-        raw_text: Raw text response from the LLM.
-        
-    Returns:
-        Parsed dict with category keys and item lists.
     """
     # Try to extract JSON from the response
     # Handle markdown code blocks: ```json ... ```
@@ -165,12 +144,6 @@ def parse_vision_response(raw_text: str) -> Dict[str, List[str]]:
 def check_ollama_connection(model_tag: str) -> dict:
     """
     Check if Ollama is running and the requested model is available.
-    
-    Args:
-        model_tag: Model tag to check (e.g. 'llava:7b').
-        
-    Returns:
-        Dict with 'ok' (bool), 'message' (str), and 'models' (list).
     """
     try:
         # Check if Ollama is running

@@ -15,12 +15,6 @@ import fitz  # PyMuPDF
 def extract_text_from_pdf(pdf_bytes: bytes) -> List[str]:
     """
     Extract all text from each page of a PDF.
-    
-    Args:
-        pdf_bytes: Raw bytes of the PDF file.
-        
-    Returns:
-        List of strings, one per page, containing all extracted text.
     """
     doc = fitz.open(stream=pdf_bytes, filetype="pdf")
     pages_text = []
@@ -36,11 +30,6 @@ def parse_structured_data(pdf_bytes: bytes) -> Dict[str, List[str]]:
     """
     Main entry point: extract text from PDF and parse into 6 categories.
     
-    Args:
-        pdf_bytes: Raw bytes of the PDF file.
-        
-    Returns:
-        Dict with keys for each category, values are lists of extracted items.
     """
     pages_text = extract_text_from_pdf(pdf_bytes)
     full_text = "\n".join(pages_text)

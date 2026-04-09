@@ -23,13 +23,6 @@ def generate_narrative(
     
     Uses a text-only LLM (e.g. llama3.2:3b) to produce a 3-4 paragraph summary
     written as if a senior NHAI engineer is briefing a non-technical stakeholder.
-    
-    Args:
-        merged_data:          Merged structured data from text + vision extraction.
-        narrative_model_tag:  Ollama model tag for narrative generation (text-only preferred).
-        
-    Returns:
-        Narrative summary string. Returns error message on failure.
     """
     # Format the structured data as readable text for the prompt
     structured_text = _format_data_for_prompt(merged_data)

@@ -1,6 +1,6 @@
 """
 Merger Module
-Combines outputs from the text extractor (PyMuPDF) and vision extractor (LLM).
+Combines outputs from the text extractor and vision extractor.
 
 Merge strategy:
 - Text extractor data is PREFERRED where both sources have data (higher accuracy)
@@ -21,13 +21,6 @@ def merge_extractions(
     
     Priority: text_data > vision_data (text extraction is more accurate for PDFs).
     Vision data supplements where text extraction has gaps.
-    
-    Args:
-        text_data:   Structured data from PyMuPDF text extraction.
-        vision_data: Structured data from Ollama vision model.
-        
-    Returns:
-        Merged dict with deduplicated items per category.
     """
     merged = {}
     
@@ -55,13 +48,6 @@ def _merge_lists(primary: List[str], secondary: List[str]) -> List[str]:
     """
     Merge two lists, keeping all primary items and adding non-duplicate secondary items.
     Uses fuzzy matching to detect duplicates (case-insensitive substring check).
-    
-    Args:
-        primary:   Higher priority items (from text extraction).
-        secondary: Lower priority items (from vision extraction).
-        
-    Returns:
-        Combined list with duplicates removed.
     """
     result = list(primary)  # Keep all primary items
     
@@ -118,12 +104,6 @@ def _is_similar(a: str, b: str) -> bool:
 def get_extraction_summary(merged_data: Dict[str, List[str]]) -> Dict[str, int]:
     """
     Get a count summary of extracted items per category.
-    
-    Args:
-        merged_data: Merged extraction results.
-        
-    Returns:
-        Dict mapping category name to item count.
     """
     return {
         category: len(items)
