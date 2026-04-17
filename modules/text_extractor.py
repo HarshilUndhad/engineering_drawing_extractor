@@ -166,7 +166,7 @@ def extract_general_info(text: str) -> List[str]:
     
     # Paper Size
     paper_match = re.search(
-        r"(?:Paper\s+Size|PAPER\s+SIZE)[:\s]*([A-Z0-9]+\s*(?:Sheet)?)", text, re.IGNORECASE
+        r"(?:Paper\s+Size|PAPER\s+SIZE)[:\s\-]*([A-Z0-9]+\s*(?:Sheet|SHEET)?)", text, re.IGNORECASE
     )
     if paper_match:
         items.append(f"Paper Size: {paper_match.group(1).strip()}")
